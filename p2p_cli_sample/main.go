@@ -7,10 +7,16 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v3"
+
+	gstSink "github.com/nishina-y/p2p_cli_sample/p2p_cli_sample/internal/gstreamer-sink"
+	gstSrc "github.com/nishina-y/p2p_cli_sample/p2p_cli_sample/internal/gstreamer-src"
 )
 
 const (
@@ -27,8 +33,13 @@ func debuglog(message string) {
 	}
 }
 
+func init() {
+	runtime.LockOSThread()
+}
+
 func main() {
 	addr := flag.String("addr", "localhost:8080", "signaling server address")
+	videoSrc := flag.String("video-src", "videotestsrc", "GStreamer video src")
 	mode := flag.String("mode", "answer", "answer of offer")
 	flag.Parse()
 	debuglog("mode=" + *mode)
@@ -88,6 +99,50 @@ func main() {
 			panic(onICECandidateErr)
 		}
 	})
+
+	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
+		debuglog("Peer Connection State has changed: " + s.String())
+
+		if s == webrtc.PeerConnectionStateFailed {
+			debuglog("Peer Connection has gone to failed exiting")
+			os.Exit(0)
+		}
+	})
+
+	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+		go func() {
+			ticker := time.NewTicker(time.Second * 3)
+			for range ticker.C {
+				rtcpSendErr := peerConnection.WriteRTCP([]rtcp.Packet{&rtcp.PictureLossIndication{MediaSSRC: uint32(track.SSRC())}})
+				if rtcpSendErr != nil {
+					fmt.Println(rtcpSendErr)
+				}
+			}
+		}()
+
+		codecName := strings.Split(track.Codec().RTPCodecCapability.MimeType, "/")[1]
+		fmt.Printf("Track has started, of type %d: %s \n", track.PayloadType(), codecName)
+		pipeline := gstSink.CreatePipeline(track.PayloadType(), strings.ToLower(codecName))
+		pipeline.Start()
+		buf := make([]byte, 1400)
+		for {
+			i, _, readErr := track.Read(buf)
+			if readErr != nil {
+				panic(err)
+			}
+
+			pipeline.Push(buf[:i])
+		}
+	})
+
+	videoTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: "video/vp8"}, "video", "pion2")
+	if err != nil {
+		panic(err)
+	}
+	_, err = peerConnection.AddTrack(videoTrack)
+	if err != nil {
+		panic(err)
+	}
 
 	go func() {
 		for {
@@ -168,8 +223,18 @@ func main() {
 		})
 	}
 
-	for {
-	}
+	gstSrc.StartMainLoop()
+
+	go func() {
+		gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
+
+		<-gatherComplete
+		debuglog("gatherCompleted")
+
+		gstSrc.CreatePipeline("vp8", []*webrtc.TrackLocalStaticSample{videoTrack}, *videoSrc).Start()
+	}()
+
+	gstSink.StartMainLoop()
 }
 
 func signalCandidate(c *webrtc.ICECandidate) error {
