@@ -9,7 +9,8 @@ EC2等の接続する全てのクライアントが接続できる場所で起�
 ```
 git clone git@github.com:nishina-y/p2p_cli_sample.git
 cd p2p_cli_sample/signaling_server_sample
-go run *.go
+go build
+./signaling_server_sample
 ```
 
 ## TURNサーバーの起動
@@ -18,7 +19,8 @@ EC2等の接続する全てのクライアントが接続できる場所で起�
 ```
 git clone https://github.com/pion/turn
 cd turn/examples/turn-server/simple
-go run main.go -public-ip {GLOBAL_IP} -users username=password
+go build
+./simple -public-ip {GLOBAL_IP} -users username=password
 ```
 
 ## clientの起動
@@ -40,15 +42,14 @@ gst-launch-1.0 avfvideosrc ! autovideosink
 **1つ目のクライントを起動**
 ```
 git clone git@github.com:nishina-y/p2p_cli_sample.git
-cd p2p_cli_sample/p2p_cli_sample
-go run *.go --addr {シグナリングサーバーのIP}:8080 --mode answer -video-src 'autovideosrc ! videoconvert' 
+cd p2p_cli_sample/video_communication_sample
+go build
+./video_communication_sample --addr {シグナリングサーバーのIP}:8080 --mode answer -video-src 'autovideosrc ! videoconvert'
 ```
 
 **2つ目のクライントを起動**
 ```
-git clone git@github.com:nishina-y/p2p_cli_sample.git
-cd p2p_cli_sample/p2p_cli_sample
-go run *.go --addr {シグナリングサーバーのIP}:8080 --mode answer -video-src 'autovideosrc ! videoconvert' 
+./video_communication_sample --addr {シグナリングサーバーのIP}:8080 --mode answer -video-src 'autovideosrc ! videoconvert'
 ```
 
 ## 動作確認
