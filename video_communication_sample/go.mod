@@ -1,4 +1,4 @@
-module github.com/nishina-y/p2p_cli_sample/p2p_cli_sample
+module github.com/nishina-y/p2p_cli_sample/video_communication_sample
 
 go 1.17
 

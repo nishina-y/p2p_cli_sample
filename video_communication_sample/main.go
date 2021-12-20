@@ -15,8 +15,8 @@ import (
 	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v3"
 
-	gstSink "github.com/nishina-y/p2p_cli_sample/p2p_cli_sample/internal/gstreamer-sink"
-	gstSrc "github.com/nishina-y/p2p_cli_sample/p2p_cli_sample/internal/gstreamer-src"
+	gstSink "github.com/nishina-y/p2p_cli_sample/video_communication_sample/internal/gstreamer-sink"
+	gstSrc "github.com/nishina-y/p2p_cli_sample/video_communication_sample/internal/gstreamer-src"
 )
 
 const (
