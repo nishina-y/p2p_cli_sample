@@ -40,6 +40,7 @@ func init() {
 func main() {
 	addr := flag.String("addr", "localhost:8080", "signaling server address")
 	videoSrc := flag.String("video-src", "videotestsrc", "GStreamer video src")
+	// audioSrc := flag.String("audio-src", "audiotestsrc", "GStreamer audio src")
 	mode := flag.String("mode", "answer", "answer of offer")
 	flag.Parse()
 	debuglog("mode=" + *mode)
@@ -144,6 +145,15 @@ func main() {
 		panic(err)
 	}
 
+	// audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: "audio/opus"}, "audio", "pion1")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// _, err = peerConnection.AddTrack(audioTrack)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
 	go func() {
 		for {
 			select {
@@ -232,6 +242,7 @@ func main() {
 		debuglog("gatherCompleted")
 
 		gstSrc.CreatePipeline("vp8", []*webrtc.TrackLocalStaticSample{videoTrack}, *videoSrc).Start()
+		// gstSrc.CreatePipeline("opus", []*webrtc.TrackLocalStaticSample{audioTrack}, *audioSrc).Start()
 	}()
 
 	gstSink.StartMainLoop()
