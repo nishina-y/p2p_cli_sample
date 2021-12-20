@@ -46,7 +46,7 @@ go build
 
 **2つ目のクライントを起動**
 ```
-./video_communication_sample --addr {シグナリングサーバーのIP}:8080 --mode answer -video-src 'autovideosrc ! videoconvert'
+./video_communication_sample --addr {シグナリングサーバーのIP}:8080 --mode offer -video-src 'autovideosrc ! videoconvert'
 ```
 
 ## 動作確認
