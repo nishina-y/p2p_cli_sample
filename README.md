@@ -14,7 +14,7 @@ go run *.go
 
 ## TURNサーバーの起動
 EC2等の接続する全てのクライアントが接続できる場所で起動して下さい。  
-`tcp:3478` ポートを使用するので必要に応じてポートを開放して下さい。  
+`3478, 49152-65535` ポートを使用するので必要に応じてポートを開放して下さい。  
 ```
 git clone https://github.com/pion/turn
 cd turn/examples/turn-server/simple
