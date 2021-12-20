@@ -37,14 +37,14 @@ brew install gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plu
 gst-launch-1.0 avfvideosrc ! autovideosink
 ```
 
-**1つ目のPCでクライントを起動**
+**1つ目のクライントを起動**
 ```
 git clone git@github.com:nishina-y/p2p_cli_sample.git
 cd p2p_cli_sample/p2p_cli_sample
 go run *.go --addr {シグナリングサーバーのIP}:8080 --mode answer -video-src 'autovideosrc ! videoconvert' 
 ```
 
-**2つ目のPCでクライントを起動**
+**2つ目のクライントを起動**
 ```
 git clone git@github.com:nishina-y/p2p_cli_sample.git
 cd p2p_cli_sample/p2p_cli_sample
