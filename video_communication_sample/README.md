@@ -30,7 +30,7 @@ clientはmacでのみ動作確認を行っています
 brew install gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly
 ```
 
-**カメラのアクセス許可**  
+**カメラ・マイクへのアクセス許可**  
 ターミナルから以下のコマンドを実行してmacのセキュリティーとプライバシー設定でターミナルからのカメラとマイクへのアクセス許可を設定して下さい。
 ```shell
 gst-launch-1.0 avfvideosrc ! autovideosink
@@ -59,5 +59,5 @@ go build
 ```
 
 ## 動作確認
-双方のPCでCLI上でのテキストチャットとカメラの映像配信が行なえます。   
+双方のPCでCLI上でのテキストチャットとビデオ通話が行なえます。   
 ※接続までに数秒時間がかかります
